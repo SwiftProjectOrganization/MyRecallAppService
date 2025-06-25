@@ -1,0 +1,50 @@
+openapi: '3.1.0'
+info:
+  title: MyRecallAppService
+  version: 1.0.0
+servers:
+  - url: http://0.0.0.0:8081/api
+    description: Network deployment
+paths:
+  /greet:
+    get:
+      operationId: getGreeting
+      parameters:
+      - name: name
+        required: false
+        in: query
+        description: The name used in the returned greeting.
+        schema:
+          type: string
+      - name: greet
+        required: false
+        in: query
+        description: The greeting used in the returned greeting.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A success response with a greeting.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Greeting'
+  /emoji:
+    get:
+      operationId: getEmoji
+      responses:
+        '200':
+          description: A success response with an emoji.
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+    Greeting:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
