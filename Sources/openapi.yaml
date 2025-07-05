@@ -6,42 +6,38 @@ servers:
   - url: http://0.0.0.0:8081/api
     description: Network deployment
 paths:
-  /greet:
+  /pjson:
     get:
-      operationId: getGreeting
+      operationId: putJson
       parameters:
-      - name: name
+      - name: user
         required: false
         in: query
-        description: The name used in the returned greeting.
+        description: The owner of the topic.
         schema:
           type: string
-      - name: greet
+      - name: topic
         required: false
         in: query
-        description: The greeting used in the returned greeting.
+        description: The topic name.
+        schema:
+          type: string
+      - name: content
+        required: false
+        in: query
+        description: The JSON content of the topic.
         schema:
           type: string
       responses:
         '200':
-          description: A success response with a greeting.
+          description: A success response.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Greeting'
-  /emoji:
-    get:
-      operationId: getEmoji
-      responses:
-        '200':
-          description: A success response with an emoji.
-          content:
-            text/plain:
-              schema:
-                type: string
+                $ref: '#/components/schemas/Json'
 components:
   schemas:
-    Greeting:
+    Json:
       type: object
       properties:
         message:

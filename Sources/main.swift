@@ -10,29 +10,51 @@ import OpenAPIVapor
 
 // Define a type that conforms to the generated protocol.
 struct MyRecallAppServiceAPIImpl: APIProtocol {
-  func getGreeting(_ input: Operations.GetGreeting.Input) async throws -> Operations.GetGreeting.Output {
-    let inarg = input.query.name ?? "Hello:Robert"
-    let greet = inarg.split(separator: ":")[0]
-    let name = inarg.split(separator: ":")[1]
-    print(greet + ", " + name)
+  func putJson(_ input: Operations.PutJson.Input) async throws -> Operations.PutJson.Output {
+    let user = input.query.user ?? "Rob"
+    let topic = input.query.topic ?? "BioChemistry"
+    let content = input.query.content ?? "No content!"
+    //print((user, topic, content.count))
 
-    let documentsUrl = FileManager.default.urls(for: .documentDirectory,
+    let fileManager = FileManager.default
+    let documentsUrl = fileManager.urls(for: .documentDirectory,
                                                 in: .userDomainMask)[0] as NSURL
     
-    // add a filename
-    let fileUrl = documentsUrl.appendingPathComponent("MyRecallApp/" + name + ".txt")
+    let dirUrl = documentsUrl.appendingPathComponent("MyRecallApp/Data" + "/" + user)
+    var isDir: ObjCBool = false
+    if !fileManager.fileExists(atPath: dirUrl!.path , isDirectory: &isDir) {
+      print("Given directory \(String(describing: dirUrl!)) does not exist.")
+      do {
+        try fileManager.createDirectory(at: dirUrl!,
+                                        withIntermediateDirectories: true,
+                                        attributes: nil)
+        print("Created directory \(dirUrl!)")
+      } catch {
+        print("Could not create directory \(dirUrl!)")
+        print(error.localizedDescription)
+      }
+    }
     
-    // write to it
-    try! greet.write(to: fileUrl!, atomically: true, encoding: String.Encoding.utf8)
-    let greeting = Components.Schemas.Greeting(message: "\(greet), \(name)!")
-    return .ok(.init(body: .json(greeting)))
-  }
-  
-  func getEmoji(_ input: Operations.GetEmoji.Input) async throws -> Operations.GetEmoji.Output {
-    let emojis = "👋👍👏🙏🤙🤘"
-    let emoji = String(emojis.randomElement()!)
-    print(emoji)
-    return .ok(.init(body: .plainText(.init(emoji))))
+    isDir = false
+    if fileManager.fileExists(atPath: dirUrl!.path , isDirectory: &isDir) {
+      let topicUrl = dirUrl?.appendingPathComponent(topic + ".json")
+      do {
+        try content.write(to: topicUrl! as URL,
+                           atomically: true,
+                           encoding: String.Encoding.utf8)
+        let retcode = Components.Schemas.Json(message: "Wrote `\(topic)` for user `\(user)`!")
+        return .ok(.init(body: .json(retcode)))
+      } catch {
+        print(error.localizedDescription)
+        print("Could not write \(String(describing: topicUrl!)).")
+        let retcode = Components.Schemas.Json(message: "Topic `\(topic)` for user `\(user)` could not be written!")
+        return .ok(.init(body: .json(retcode)))
+      }
+    } else {
+      print("Given DIRECTORY \(String(describing: dirUrl!)) does not exist, nothing stored.")
+      let retcode = Components.Schemas.Json(message: "Topic `\(topic)` for user `\(user)` not stored!")
+      return .ok(.init(body: .json(retcode)))
+    }
   }
 }
 
