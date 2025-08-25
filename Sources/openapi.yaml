@@ -35,6 +35,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Json'
+  /list:
+    get:
+      operationId: listTopics
+      parameters:
+      - name: user
+        required: false
+        in: query
+        description: The owner of the topic.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A success response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Json'
+  /gjson:
+    get:
+      operationId: getJson
+      parameters:
+      - name: user
+        required: false
+        in: query
+        description: The owner of the topic.
+        schema:
+          type: string
+      - name: topic
+        required: false
+        in: query
+        description: The topic name.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A success response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Json'
 components:
   schemas:
     Json:
