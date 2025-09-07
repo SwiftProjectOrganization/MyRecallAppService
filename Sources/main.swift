@@ -42,7 +42,9 @@ struct MyRecallAppServiceAPIImpl: APIProtocol {
         try content.write(to: topicUrl! as URL,
                           atomically: true,
                           encoding: String.Encoding.utf8)
-        let retcode = Components.Schemas.Json(message: "Wrote `\(topic)` for user `\(user)`!")
+        let message = "Wrote `\(topic)` for user `\(user)`!"
+        print(message)
+        let retcode = Components.Schemas.Json(message: message)
         return .ok(.init(body: .json(retcode)))
       } catch {
         print(error.localizedDescription)
@@ -70,7 +72,8 @@ struct MyRecallAppServiceAPIImpl: APIProtocol {
       do {
         let items = try fileManager.contentsOfDirectory(atPath: dirUrl!.path)
         print(items)
-        let retcode = Components.Schemas.Json(message: "Reading topics for user `\(user)`!")
+        //print(items.count)
+        let retcode = Components.Schemas.Json(message: "\(items)")
         return .ok(.init(body: .json(retcode)))
       } catch {
         print(error.localizedDescription)
@@ -89,6 +92,7 @@ struct MyRecallAppServiceAPIImpl: APIProtocol {
   func getJson(_ input: Operations.GetJson.Input) async throws -> Operations.GetJson.Output {
     let user = input.query.user ?? "Rob"
     let topic = input.query.topic ?? "Huberman"
+    print(topic)
     
     let fileManager = FileManager.default
     let documentsUrl = fileManager.urls(for: .documentDirectory,
@@ -100,8 +104,8 @@ struct MyRecallAppServiceAPIImpl: APIProtocol {
     if fileManager.fileExists(atPath: dirUrl!.path , isDirectory: &isDir) {
       do {
         let contents = try String(contentsOf: dirUrl!)
-        print(contents)
-        let retcode = Components.Schemas.Json(message: "Reading topic `\(topic)` for user `\(user)`!")
+        //print(contents)
+        let retcode = Components.Schemas.Json(message: "\(contents)")
         return .ok(.init(body: .json(retcode)))
       } catch {
         print(error.localizedDescription)
