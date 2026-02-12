@@ -3,7 +3,7 @@ info:
   title: MyRecallAppService
   version: 1.0.0
 servers:
-  - url: http://0.0.0.0:8081/api
+  - url: http://0.0.0.0:8083/api
     description: Network deployment
 paths:
   /pjson:

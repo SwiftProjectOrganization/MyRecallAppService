@@ -3,10 +3,8 @@
 
 import Foundation
 import Vapor
-
 import OpenAPIRuntime
 import OpenAPIVapor
-
 
 // Define a type that conforms to the generated protocol.
 struct MyRecallAppServiceAPIImpl: APIProtocol {
@@ -126,6 +124,7 @@ struct MyRecallAppServiceAPIImpl: APIProtocol {
 let app = try await Vapor.Application.make()
 //print(app.http.server.configuration.hostname)
 app.http.server.configuration.hostname = "0.0.0.0"
+app.http.server.configuration.port = 8083
 
 // Create a VaporTransport using your application.
 let transport = VaporTransport(routesBuilder: app)
